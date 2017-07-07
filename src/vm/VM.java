@@ -4136,14 +4136,16 @@ public class VM {
     public void doNextInstruction() {
         if (pc >= instructions.size())
             return;
-        
+
         Instruction currentInstruction = instructions.get(pc);
         pc++;
+
         int instructionIndex = instructionSet.indexOf(currentInstruction);
         if (instructionIndex == -1) {
             System.err.println("Man, I tired just so that you know, but I could not find no instruction like that in my instruction set.");
             return;
         }
+
         Instruction matchingInstruction = instructionSet.get(instructionIndex);
         matchingInstruction.function.doInstruction(currentInstruction);
     }
