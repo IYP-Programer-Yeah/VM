@@ -28,6 +28,8 @@ public class VM {
 
     private ArrayList<Instruction> instructions = new ArrayList<>();
 
+    private boolean reverseStringBytes = false;
+
     public VM(int memorySize) {
         this.memorySize = memorySize;
         memory = new byte[memorySize];
@@ -322,7 +324,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -352,7 +354,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -382,7 +384,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -406,15 +408,17 @@ public class VM {
                 int firstOperandValue = (Integer)instruction.operands[0].value;
                 int address = firstOperandValue;
                 String secondOperandValue = (String)instruction.operands[1].value;
-                byte[] wantedByte = new byte[secondOperandValue.length() + 1];
+                byte[] wantedBytes = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
-                for (int i=0;i<wantedByte.length - 1; i++)
-                    wantedByte[i] = (byte)secondOperandValue.charAt(i);
-                wantedByte[wantedByte.length - 1] = 0;
-                writeToMemory(wantedByte, address, wantedByte.length);
+                for (int i=0;i<wantedBytes.length - 1; i++)
+                    wantedBytes[i] = (byte)secondOperandValue.charAt(i);
+                wantedBytes[wantedBytes.length - 1] = 0;
+                if (reverseStringBytes)
+                    wantedBytes = reverseBytes(wantedBytes);
+                writeToMemory(wantedBytes, address, wantedBytes.length);
             }
         };
         instructionSet.add(instruction);
@@ -439,7 +443,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -469,7 +473,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -499,7 +503,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -523,15 +527,17 @@ public class VM {
                 int firstOperandValue = getValueOfName((String)instruction.operands[0].value);
                 int address = firstOperandValue;
                 String secondOperandValue = (String)instruction.operands[1].value;
-                byte[] wantedByte = new byte[secondOperandValue.length() + 1];
+                byte[] wantedBytes = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
-                for (int i=0;i<wantedByte.length - 1; i++)
-                    wantedByte[i] = (byte)secondOperandValue.charAt(i);
-                wantedByte[wantedByte.length - 1] = 0;
-                writeToMemory(wantedByte, address, wantedByte.length);
+                for (int i=0;i<wantedBytes.length - 1; i++)
+                    wantedBytes[i] = (byte)secondOperandValue.charAt(i);
+                wantedBytes[wantedBytes.length - 1] = 0;
+                if (reverseStringBytes)
+                    wantedBytes = reverseBytes(wantedBytes);
+                writeToMemory(wantedBytes, address, wantedBytes.length);
             }
         };
         instructionSet.add(instruction);
@@ -556,7 +562,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -586,7 +592,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -616,7 +622,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -640,15 +646,17 @@ public class VM {
                 int firstOperandValue = getValueOfRegister((String)instruction.operands[0].value);
                 int address = firstOperandValue;
                 String secondOperandValue = (String)instruction.operands[1].value;
-                byte[] wantedByte = new byte[secondOperandValue.length() + 1];
+                byte[] wantedBytes = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
-                for (int i=0;i<wantedByte.length - 1; i++)
-                    wantedByte[i] = (byte)secondOperandValue.charAt(i);
-                wantedByte[wantedByte.length - 1] = 0;
-                writeToMemory(wantedByte, address, wantedByte.length);
+                for (int i=0;i<wantedBytes.length - 1; i++)
+                    wantedBytes[i] = (byte)secondOperandValue.charAt(i);
+                wantedBytes[wantedBytes.length - 1] = 0;
+                if (reverseStringBytes)
+                    wantedBytes = reverseBytes(wantedBytes);
+                writeToMemory(wantedBytes, address, wantedBytes.length);
             }
         };
         instructionSet.add(instruction);
@@ -674,7 +682,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -705,7 +713,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -736,7 +744,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -763,7 +771,7 @@ public class VM {
                 String secondOperandValue = (String)instruction.operands[1].value;
                 byte[] wantedByte = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<wantedByte.length - 1; i++)
@@ -795,7 +803,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -826,7 +834,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -857,7 +865,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -884,7 +892,7 @@ public class VM {
                 String secondOperandValue = (String)instruction.operands[1].value;
                 byte[] wantedByte = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<wantedByte.length - 1; i++)
@@ -916,7 +924,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -947,7 +955,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -978,7 +986,7 @@ public class VM {
                 byte[] wantedByte = new byte[thirdOperandValue];
                 byte[] integerBytes = intToByteArray(secondOperandValue);
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<thirdOperandValue; i++)
@@ -1005,7 +1013,7 @@ public class VM {
                 String secondOperandValue = (String)instruction.operands[1].value;
                 byte[] wantedByte = new byte[secondOperandValue.length() + 1];
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 for (int i=0;i<wantedByte.length - 1; i++)
@@ -3852,7 +3860,7 @@ public class VM {
                 byte[] integerBytes = intToByteArray(getValueOfRegister((String)instruction.operands[0].value));
                 int address = stackPointer + 1;
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 byte[] wantedByte = new byte[(Integer)instruction.operands[1].value];
@@ -3877,7 +3885,7 @@ public class VM {
                 byte[] integerBytes = intToByteArray(getValueOfName((String)instruction.operands[0].value));
                 int address = stackPointer + 1;
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in STR instruction.");
                     return;
                 }
                 byte[] wantedByte = new byte[(Integer)instruction.operands[1].value];
@@ -3902,7 +3910,7 @@ public class VM {
                 byte[] integerBytes = intToByteArray((Integer) instruction.operands[0].value);
                 int address = stackPointer + 1;
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in PSH instruction.");
                     return;
                 }
                 byte[] wantedByte = new byte[(Integer)instruction.operands[1].value];
@@ -3940,7 +3948,7 @@ public class VM {
                 int address = stackPointer + 1;
                 stackPointer += (Integer)instruction.operands[1].value;
                 if (address < 0 || address >= memorySize) {
-                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                    System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in POP instruction.");
                     return;
                 }
                 loadToRegisterFromMemory(address, (Integer)instruction.operands[1].value, (String)instruction.operands[0].value);
@@ -4045,6 +4053,31 @@ public class VM {
             }
         };
         instructionSet.add(instruction);
+        /////SDF
+        //////////////Empty
+        instruction = new Instruction();
+        instruction.name = "SDF";
+        instruction.operands[0] = new Operand();
+        instruction.function = new InstructionFunction() {
+            @Override
+            public void doInstruction(Instruction instruction) {
+                reverseStringBytes = false;
+            }
+        };
+        instructionSet.add(instruction);
+
+        /////SDB
+        //////////////Empty
+        instruction = new Instruction();
+        instruction.name = "SDB";
+        instruction.operands[0] = new Operand();
+        instruction.function = new InstructionFunction() {
+            @Override
+            public void doInstruction(Instruction instruction) {
+                reverseStringBytes = true;
+            }
+        };
+        instructionSet.add(instruction);
     }
 
     public void loadInstructions(String instructions) {
@@ -4144,7 +4177,7 @@ public class VM {
         int valueToLoad = 0;
         for (int i=0; i < bytes; i++) {
             if ((address + i) > memorySize || (address + i) < 0) {
-                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory.");
                 continue;
             }
             valueToLoad *= 256;
@@ -4157,7 +4190,7 @@ public class VM {
         int valueToLoad = 0;
         for (int i=0; i < bytes; i++) {
             if ((address + i) > memorySize || (address + i) < 0) {
-                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory.");
                 continue;
             }
             valueToLoad *= 256;
@@ -4203,10 +4236,16 @@ public class VM {
     private void writeToMemory (byte[] bytes, int address, int size) {
         for (int i=0;i<size; i++) {
             if ((address + i) > memorySize || (address + i) < 0) {
-                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory in LOD instruction.");
+                System.err.println("I don't know wtf you think your doing, but you're accessing out of your memory.");
                 continue;
             }
             memory[address + i] = bytes[i];
         }
+    }
+    private byte[] reverseBytes(byte[] bytes) {
+        byte[] reversedBytes = new byte[bytes.length];
+        for (int i=0; i<bytes.length; i++)
+            reversedBytes[i] = bytes[bytes.length - 1 - i];
+        return reversedBytes;
     }
 }
