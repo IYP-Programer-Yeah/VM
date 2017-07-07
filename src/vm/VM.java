@@ -3694,7 +3694,11 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
-                pc = labels.get((String)instruction.operands[0].value) - 1;
+                if (labels.get(instruction.operands[0].value) == null) {
+                    System.err.println("I donnu a goddamned thing about this label, i'm not doing the jump, cya");
+                    return;
+                }
+                pc = labels.get((String)instruction.operands[0].value);
             }
         };
         instructionSet.add(instruction);
@@ -3707,7 +3711,7 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
-                pc += ((Integer)instruction.operands[0].value) - 1;
+                pc += (Integer)instruction.operands[0].value - 1;
             }
         };
         instructionSet.add(instruction);
@@ -3737,8 +3741,12 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
+                if (labels.get(instruction.operands[0].value) == null) {
+                    System.err.println("I donnu a goddamned thing about this label, i'm not doing the jump, cya");
+                    return;
+                }
                 if ((getValueOfRegister((String)instruction.operands[2].value) & generateByteMask((Integer)instruction.operands[2].value)) == 0)
-                    pc = labels.get((String)instruction.operands[0].value) - 1;
+                    pc = labels.get((String)instruction.operands[0].value);
             }
         };
         instructionSet.add(instruction);
@@ -3791,8 +3799,12 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
+                if (labels.get(instruction.operands[0].value) == null) {
+                    System.err.println("I donnu a goddamned thing about this label, i'm not doing the jump, cya");
+                    return;
+                }
                 if ((getValueOfRegister((String)instruction.operands[2].value) & generateByteMask((Integer)instruction.operands[2].value)) != 0)
-                    pc = labels.get((String)instruction.operands[0].value) - 1;
+                    pc = labels.get((String)instruction.operands[0].value);
             }
         };
         instructionSet.add(instruction);
@@ -3964,8 +3976,12 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
+                if (labels.get(instruction.operands[0].value) == null) {
+                    System.err.println("I donnu a goddamned thing about this label, i'm not doing the call, cya");
+                    return;
+                }
                 returnAddresses.push(pc);
-                pc = labels.get((String)instruction.operands[0].value) - 1;
+                pc = labels.get((String)instruction.operands[0].value);
             }
         };
         instructionSet.add(instruction);
@@ -3978,8 +3994,13 @@ public class VM {
         instruction.function = new InstructionFunction() {
             @Override
             public void doInstruction(Instruction instruction) {
+                if (labels.get(instruction.operands[0].value) == null) {
+                    System.err.println("I donnu a goddamned thing about this label, i'm not doing the linked call, cya");
+                    return;
+                }
                 framePointers.push(stackPointer + 1);
-                pc = labels.get((String)instruction.operands[0].value) - 1;
+                returnAddresses.push(pc);
+                pc = labels.get((String)instruction.operands[0].value);
             }
         };
         instructionSet.add(instruction);
