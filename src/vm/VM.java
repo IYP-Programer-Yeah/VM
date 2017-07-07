@@ -4136,6 +4136,7 @@ public class VM {
     public void doNextInstruction() {
         if (pc >= instructions.size())
             return;
+        
         Instruction currentInstruction = instructions.get(pc);
         pc++;
         int instructionIndex = instructionSet.indexOf(currentInstruction);
